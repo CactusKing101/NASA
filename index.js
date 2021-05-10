@@ -199,12 +199,12 @@ client.on('message', (msg) => {
   const args = msg.content.slice(prefix.length).trim().split(' ');
   const command = args.shift().toLowerCase();
 
-  if (command == 'apod') {
+  if (command == 'apod' && msg.author.id == '473110112844644372') {
     APOD(msg.channel.id);
   } else if (command == 'astros') {
     astros(msg.channel.id);
-  } else if (command == 'test') {
-    weather();
+  } else if (command == 'test' && msg.author.id == '473110112844644372') {
+    events();
   }
 });
 
