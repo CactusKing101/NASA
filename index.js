@@ -53,6 +53,26 @@ const ISS = () => {
     .catch(console.error);
 };
 
+const nextLaunch = () => {
+  client.channels.cache.get('841137170525716480').messages.fetch('841137416278376448')
+    .then(message => {
+      request(`https://ll.thespacedevs.com/2.0.0/launch/upcoming/?format=json`, { json: true }, (err, res, body) => {
+        let lon = body.iss_position.longitude;
+        let lat = body.iss_position.latitude;
+        var date = new Date();
+        var embed = new Discord.MessageEmbed()
+          .setColor('#0b3d91')
+          .setTitle(`Next space launch as of ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
+          .setDescription(body.results[1].mission.description)
+          .addField(`Status and probability`, `Status: ${body.results[1].status.name}\n${body.results[1].probability}`)
+          .addField(body.results[1].launch_service_provider.name, body.results[1].launch_service_provider.type)
+          .setImage(body.results[1].image);
+        message.edit(embed);
+      });
+    })
+    .catch(console.error);
+};
+
 client.once('ready', () => {
   console.log(`Logged in as ${client.user.tag}`);
   setInterval(() => {
