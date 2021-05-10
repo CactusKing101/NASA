@@ -41,12 +41,13 @@ const ISS = () => {
     .then(message => {
       request(`http://api.open-notify.org/iss-now.json`, { json: true }, (err, res, body) => {
         let lon = body.iss_position.longitude;
-        let lad = body.iss_position.latitude;
+        let lat = body.iss_position.latitude;
         var date = new Date();
         var embed = new Discord.MessageEmbed()
           .setColor('#0b3d91')
           .setTitle(`ISS current location as of ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
-          .setImage(`https://image.maps.ls.hereapi.com/mia/1.6/mapview?apiKey=${apiKey2}&c=${lon},${lad}&sb=mk&t=1&z=1&w=500&h=300`);
+          .setThumbnail(`https://api.auroras.live/v1/?type=embed&image=current&lat=${lat}&long=${lon}`)
+          .setImage(`https://image.maps.ls.hereapi.com/mia/1.6/mapview?apiKey=${apiKey2}&c=${lon},${lat}&sb=mk&t=1&z=1&w=500&h=300`);
         message.edit(embed);
       });
     })
