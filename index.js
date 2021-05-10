@@ -79,7 +79,7 @@ const nextLaunch = () => {
         var temp = 0
         for(let i = 0; i < body.results.length; ++i) {
           var tempDate = new Date();
-          if (temp == 0 || temp > (date.getTime() - tempDate.getTime())) {
+          if (temp == 0 || temp > (date.getTime() - tempDate.getTime()) && (date.getTime() - tempDate.getTime()) > 0) {
             id = i;
             temp = date.getTime() - tempDate.getTime();
           }
