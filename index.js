@@ -78,10 +78,10 @@ const nextLaunch = () => {
         var id = 0;
         var temp = 0
         for(let i = 0; i < body.results.length; ++i) {
-          var tempDate = new Date();
-          if (temp == 0 || temp > (date.getTime() - tempDate.getTime()) && (date.getTime() - tempDate.getTime()) > 0) {
+          var tempDate = new Date(body.results[i].net);
+          if (temp == 0 || temp > (tempDate.getTime() - date.getTime()) && (tempDate.getTime() - date.getTime()) > 0) {
             id = i;
-            temp = date.getTime() - tempDate.getTime();
+            temp = tempDate.getTime() - date.getTime();
           }
         }
         var launchTime = new Date(body.results[id].net);
@@ -89,14 +89,17 @@ const nextLaunch = () => {
           .setColor('#0b3d91')
           .setAuthor(`Next space launch as of ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
           .setTitle(body.results[id].name)
-          .setDescription(body.results[id].mission.description)
           .setThumbnail(body.results[id].ideographic)
-          .addField(body.results[id].mission.name, body.results[id].mission.type)
           .addField(`Status and probability`, `Status: ${body.results[id].status.name}\nProbability: ${body.results[id].probability}`)
           .addField(body.results[id].launch_service_provider.name, body.results[id].launch_service_provider.type)
-          .addField(`Orbit`, body.results[id].mission.orbit.name)
           .setFooter(`T - ${time(launchTime.getTime() - date.getTime())}`)
           .setImage(body.results[id].image);
+        if (body.results[id].mission != null) {
+          embed
+            .setDescription(body.results[id].mission.description)
+            .addField(body.results[id].mission.name, body.results[id].mission.type)
+            .addField(`Orbit`, body.results[id].mission.orbit.name);
+        }
         message.edit(embed);
       });
     })
