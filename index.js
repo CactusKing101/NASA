@@ -110,7 +110,7 @@ client.once('ready', () => {
   console.log(`Logged in as ${client.user.tag}`);
   setInterval(() => {
     var date = new Date();
-    if (date.getHours() == 6 && date.getMinutes() == 0) APOD();
+    if (date.getHours() == 7 && date.getMinutes() == 0) APOD();
   }, 60000);
   setInterval(ISS, 60000);
   setInterval(nextLaunch, 600000);
