@@ -1,6 +1,6 @@
 const request = require('request');
 const Discord = require('discord.js');
-const { chId, prefix } = require('./general/config.json');
+const { chId, prefix, messages } = require('./general/config.json');
 const { main, apiKey1, apiKey2 } = require('./general/token.json');
 
 const client = new Discord.Client();
@@ -66,18 +66,18 @@ const ISS = () => {
           .setImage(`https://image.maps.ls.hereapi.com/mia/1.6/mapview?apiKey=${apiKey2}&c=${lon},${lat}&sb=mk&t=1&z=1&w=500&h=300`);
         message.edit(embed);
       });
-    })
-    .catch(console.error);
+    });
 };
 
 const nextLaunch = () => {
   client.channels.cache.get('841137170525716480').messages.fetch('841137416278376448')
     .then(message => {
       request(`https://ll.thespacedevs.com/2.0.0/launch/upcoming/?format=json`, { json: true }, (err, res, body) => {
+        if (err) return console.log(err);
         var date = new Date();
         var id = 0;
-        var temp = 0
-        for(let i = 0; i < body.results.length; ++i) {
+        var temp = 0;
+        for (let i = 0; i < body.results.length; ++i) {
           var tempDate = new Date(body.results[i].net);
           if (temp == 0 || temp > (tempDate.getTime() - date.getTime()) && (tempDate.getTime() - date.getTime()) > 0) {
             id = i;
@@ -89,11 +89,11 @@ const nextLaunch = () => {
           .setColor('#0b3d91')
           .setAuthor(`Next space launch as of ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
           .setTitle(body.results[id].name)
-          .setThumbnail(body.results[id].ideographic)
+          .setThumbnail(body.results[id].image)
           .addField(`Status and probability`, `Status: ${body.results[id].status.name}\nProbability: ${body.results[id].probability}`)
           .addField(`Provider: ${body.results[id].launch_service_provider.name}`, `Type: ${body.results[id].launch_service_provider.type}`)
           .setFooter(`T - ${time(launchTime.getTime() - date.getTime())}`)
-          .setImage(body.results[id].image);
+          .setImage(body.results[id].ideographic);
         if (body.results[id].mission != null) {
           embed
             .setDescription(body.results[id].mission.description)
@@ -102,8 +102,36 @@ const nextLaunch = () => {
         }
         message.edit(embed);
       });
-    })
-    .catch(console.error);
+    });
+};
+
+const events = () => {
+  var embeds = [];
+  request(`https://ll.thespacedevs.com/2.0.0/event/upcoming/?format=json`, { json: true }, (err, res, body) => {
+    if (err) return console.log(err);
+    var date = new Date();
+
+    for (let i of body.results) {
+      var embed = new Discord.MessageEmbed()
+        .setColor('#0b3d91')
+        .setAuthor(`Next events as of ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
+        .setTitle(i.name)
+        .setURL(i.news_url)
+        .setDescription(i.description)
+        .addField('Type', i.type.name);
+      embeds.push(embed);
+    }
+    for(let j = 0; j < messages.length; ++j) {
+      client.channels.cache.get('841334897825415199').messages.fetch(messages[j])
+        .then(message => {
+          if (embeds[j] != null) {
+            message.edit(embeds[j]);
+          } else {
+            message.edit(new Discord.MessageEmbed().setImage('\u200B').setColor('#9e9d9d'));
+          }
+        });
+    }
+  });
 };
 
 client.once('ready', () => {
@@ -113,7 +141,8 @@ client.once('ready', () => {
     if (date.getHours() == 7 && date.getMinutes() == 0) APOD();
   }, 60000);
   setInterval(ISS, 60000);
-  setInterval(nextLaunch, 600000);
+  setInterval(events, 900000);
+  setInterval(nextLaunch, 900000);
   console.log(`Bot init complete`);
 });
 
@@ -131,7 +160,7 @@ client.on('message', (msg) => {
   } else if (command == 'astros') {
     astros(msg.channel.id);
   } else if (command == 'test') {
-    nextLaunch();
+    events();
   }
 });
 
