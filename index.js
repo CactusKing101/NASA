@@ -80,6 +80,7 @@ client.once('ready', () => {
     if (date.getHours() == 6 && date.getMinutes() == 0) APOD();
   }, 60000);
   setInterval(ISS, 60000);
+  setInterval(nextLaunch, 60000);
   console.log(`Bot init complete`);
 });
 
@@ -97,7 +98,7 @@ client.on('message', (msg) => {
   } else if (command == 'astros') {
     astros(msg.channel.id);
   } else if (command == 'test') {
-    ISS();
+    nextLaunch();
   }
 });
 
