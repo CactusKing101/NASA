@@ -60,10 +60,15 @@ const nextLaunch = () => {
         var date = new Date();
         var embed = new Discord.MessageEmbed()
           .setColor('#0b3d91')
-          .setTitle(`Next space launch as of ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
+          .setAuthor(`Next space launch as of ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
+          .setTitle(body.results[1].name)
           .setDescription(body.results[1].mission.description)
-          .addField(`Status and probability`, `Status: ${body.results[1].status.name}\n${body.results[1].probability}`)
+          .setThumbnail(body.results[1].ideographic)
+          .addField(body.results[1].mission.name, body.results[1].mission.type)
+          .addField(`Status and probability`, `Status: ${body.results[1].status.name}\nProbability: ${body.results[1].probability}`)
           .addField(body.results[1].launch_service_provider.name, body.results[1].launch_service_provider.type)
+          .addField(`Orbit`, body.results[1].orbit.name)
+          .setFooter(body.results[1].net)
           .setImage(body.results[1].image);
         message.edit(embed);
       });
