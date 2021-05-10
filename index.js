@@ -5,6 +5,23 @@ const { main, apiKey1, apiKey2 } = require('./general/token.json');
 
 const client = new Discord.Client();
 
+const time = (input = Number) => {
+  input = Math.floor((input / 1000) / 60);
+  let result = '';
+  if (input >= 1440 && input < 525600) {
+    result += `${Math.floor(input / 1440)}d `;
+    input %= 1440;
+  }
+  if (input >= 60 && input < 1440) {
+    result += `${Math.floor(input / 60)}h `;
+    input %= 60;
+  }
+  if (input < 60) {
+    result += `${Math.floor(input)}m`;
+  }
+  return result.trim();
+};
+
 const APOD = (id = chId) => {
   request(`https://api.nasa.gov/planetary/apod?api_key=${apiKey1}`, { json: true }, (err, res, body) => {
     if (err) return console.log(err);
@@ -58,6 +75,7 @@ const nextLaunch = () => {
     .then(message => {
       request(`https://ll.thespacedevs.com/2.0.0/launch/upcoming/?format=json`, { json: true }, (err, res, body) => {
         var date = new Date();
+        var launchTime = new Date(body.results[1].net);
         var embed = new Discord.MessageEmbed()
           .setColor('#0b3d91')
           .setAuthor(`Next space launch as of ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
@@ -68,7 +86,7 @@ const nextLaunch = () => {
           .addField(`Status and probability`, `Status: ${body.results[1].status.name}\nProbability: ${body.results[1].probability}`)
           .addField(body.results[1].launch_service_provider.name, body.results[1].launch_service_provider.type)
           .addField(`Orbit`, body.results[1].mission.orbit.name)
-          .setFooter(body.results[1].net)
+          .setFooter(`T - ${time(launchTime.getTime() - date.getTime())}`)
           .setImage(body.results[1].image);
         message.edit(embed);
       });
@@ -83,7 +101,7 @@ client.once('ready', () => {
     if (date.getHours() == 6 && date.getMinutes() == 0) APOD();
   }, 60000);
   setInterval(ISS, 60000);
-  setInterval(nextLaunch, 60000);
+  setInterval(nextLaunch, 600000);
   console.log(`Bot init complete`);
 });
 
