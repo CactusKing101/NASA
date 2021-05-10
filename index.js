@@ -75,19 +75,28 @@ const nextLaunch = () => {
     .then(message => {
       request(`https://ll.thespacedevs.com/2.0.0/launch/upcoming/?format=json`, { json: true }, (err, res, body) => {
         var date = new Date();
-        var launchTime = new Date(body.results[1].net);
+        var id = 0;
+        var temp = 0
+        for(let i = 0; i < body.results.length; ++i) {
+          var tempDate = new Date();
+          if (temp == 0 || temp > (date.getTime() - tempDate.getTime())) {
+            id = i;
+            temp = date.getTime() - tempDate.getTime();
+          }
+        }
+        var launchTime = new Date(body.results[id].net);
         var embed = new Discord.MessageEmbed()
           .setColor('#0b3d91')
           .setAuthor(`Next space launch as of ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
-          .setTitle(body.results[1].name)
-          .setDescription(body.results[1].mission.description)
-          .setThumbnail(body.results[1].ideographic)
-          .addField(body.results[1].mission.name, body.results[1].mission.type)
-          .addField(`Status and probability`, `Status: ${body.results[1].status.name}\nProbability: ${body.results[1].probability}`)
-          .addField(body.results[1].launch_service_provider.name, body.results[1].launch_service_provider.type)
-          .addField(`Orbit`, body.results[1].mission.orbit.name)
+          .setTitle(body.results[id].name)
+          .setDescription(body.results[id].mission.description)
+          .setThumbnail(body.results[id].ideographic)
+          .addField(body.results[id].mission.name, body.results[id].mission.type)
+          .addField(`Status and probability`, `Status: ${body.results[id].status.name}\nProbability: ${body.results[id].probability}`)
+          .addField(body.results[id].launch_service_provider.name, body.results[id].launch_service_provider.type)
+          .addField(`Orbit`, body.results[id].mission.orbit.name)
           .setFooter(`T - ${time(launchTime.getTime() - date.getTime())}`)
-          .setImage(body.results[1].image);
+          .setImage(body.results[id].image);
         message.edit(embed);
       });
     })
