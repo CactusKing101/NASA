@@ -112,13 +112,15 @@ const events = () => {
     var date = new Date();
 
     for (let i of body.results) {
+      var launchTime = new Date(i.date);
       var embed = new Discord.MessageEmbed()
         .setColor('#0b3d91')
         .setAuthor(`Next events as of ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
         .setTitle(i.name)
         .setURL(i.news_url)
         .setDescription(i.description)
-        .addField('Type', i.type.name);
+        .addField('Type', i.type.name)
+        .setFooter(`T - ${time(launchTime.getTime() - date.getTime())}`);
       embeds.push(embed);
     }
     for(let j = 0; j < messages.length; ++j) {
