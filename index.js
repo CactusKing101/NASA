@@ -36,7 +36,7 @@ const astros = (id = String) => {
   });
 };
 
-const iss = () => {
+const ISS = () => {
   client.channels.cache.get('841103909070307368').messages.fetch('841103939302064199')
     .then(message => {
       request(`http://api.open-notify.org/iss-now.json`, { json: true }, (err, res, body) => {
@@ -45,7 +45,7 @@ const iss = () => {
         var date = new Date();
         var embed = new Discord.MessageEmbed()
           .setColor('#0b3d91')
-          .setTitle(`Iss current location as of ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
+          .setTitle(`ISS current location as of ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
           .setImage(`https://image.maps.ls.hereapi.com/mia/1.6/mapview?apiKey=${apiKey2}&c=${lon},${lad}&sb=mk&t=1&z=1&w=500&h=300`);
         message.edit(embed);
       });
@@ -59,7 +59,7 @@ client.once('ready', () => {
     var date = new Date();
     if (date.getHours() == 6 && date.getMinutes() == 0) APOD();
   }, 60000);
-  setInterval(iss, 60000);
+  setInterval(ISS, 60000);
   console.log(`Bot init complete`);
 });
 
@@ -77,7 +77,7 @@ client.on('message', (msg) => {
   } else if (command == 'astros') {
     astros(msg.channel.id);
   } else if (command == 'test') {
-    iss();
+    ISS();
   }
 });
 
