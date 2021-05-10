@@ -57,8 +57,6 @@ const nextLaunch = () => {
   client.channels.cache.get('841137170525716480').messages.fetch('841137416278376448')
     .then(message => {
       request(`https://ll.thespacedevs.com/2.0.0/launch/upcoming/?format=json`, { json: true }, (err, res, body) => {
-        let lon = body.iss_position.longitude;
-        let lat = body.iss_position.latitude;
         var date = new Date();
         var embed = new Discord.MessageEmbed()
           .setColor('#0b3d91')
