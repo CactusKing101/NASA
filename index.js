@@ -67,7 +67,7 @@ const nextLaunch = () => {
           .addField(body.results[1].mission.name, body.results[1].mission.type)
           .addField(`Status and probability`, `Status: ${body.results[1].status.name}\nProbability: ${body.results[1].probability}`)
           .addField(body.results[1].launch_service_provider.name, body.results[1].launch_service_provider.type)
-          .addField(`Orbit`, body.results[1].orbit.name)
+          .addField(`Orbit`, body.results[1].mission.orbit.name)
           .setFooter(body.results[1].net)
           .setImage(body.results[1].image);
         message.edit(embed);
