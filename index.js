@@ -116,6 +116,7 @@ const events = () => {
     var date = new Date();
     for (let i of body.results) {
       var launchTime = new Date(i.date);
+      if (launchTime.getTime() - date.getTime() < 0) continue;
       var embed = new Discord.MessageEmbed()
         .setColor('#0b3d91')
         .setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
