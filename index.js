@@ -8,6 +8,10 @@ const client = new Discord.Client();
 const time = (input = Number) => {
   input = Math.floor((input / 1000) / 60);
   let result = '';
+  if (input >= 525600) {
+    result += `${Math.floor(input / 525600)}y `;
+    input %= 525600;
+  }
   if (input >= 1440 && input < 525600) {
     result += `${Math.floor(input / 1440)}d `;
     input %= 1440;
