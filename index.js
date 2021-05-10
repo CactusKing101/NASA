@@ -1,12 +1,12 @@
 const request = require('request');
 const Discord = require('discord.js');
 const { chId, prefix } = require('./general/config.json');
-const { main, apiKey } = require('./general/token.json');
+const { main, apiKey1, apiKey2 } = require('./general/token.json');
 
 const client = new Discord.Client();
 
 const APOD = (id = chId) => {
-  request(`https://api.nasa.gov/planetary/apod?api_key=${apiKey}`, { json: true }, (err, res, body) => {
+  request(`https://api.nasa.gov/planetary/apod?api_key=${apiKey1}`, { json: true }, (err, res, body) => {
     if (err) return console.log(err);
     const ch = client.channels.cache.get(id);
     var embed = new Discord.MessageEmbed()
@@ -29,11 +29,28 @@ const astros = (id = String) => {
       .setAuthor(`Credit to Open Notify <3`)
       .setTitle(`Current People in Space`)
       .setColor('#0b3d91');
-    for(let i of body.people) {
+    for (let i of body.people) {
       embed.addField(i.name, `Craft: ${i.craft}`, true);
     }
     ch.send(embed);
   });
+};
+
+const iss = () => {
+  client.channels.cache.get('841103909070307368').messages.fetch('841103939302064199')
+    .then(message => {
+      request(`http://api.open-notify.org/iss-now.json`, { json: true }, (err, res, body) => {
+        let lon = body.iss_position.longitude;
+        let lad = body.iss_position.latitude;
+        var date = new Date();
+        var embed = new Discord.MessageEmbed()
+          .setColor('#0b3d91')
+          .setTitle(`Iss current location as of ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
+          .setImage(`https://image.maps.ls.hereapi.com/mia/1.6/mapview?apiKey=${apiKey2}&c=${lon},${lad}&sb=mk&t=1&z=1&w=500&h=300`);
+        message.edit(embed);
+      });
+    })
+    .catch(console.error);
 };
 
 client.once('ready', () => {
@@ -42,6 +59,7 @@ client.once('ready', () => {
     var date = new Date();
     if (date.getHours() == 6 && date.getMinutes() == 0) APOD();
   }, 60000);
+  setInterval(iss, 60000);
   console.log(`Bot init complete`);
 });
 
@@ -58,6 +76,8 @@ client.on('message', (msg) => {
     APOD(msg.channel.id);
   } else if (command == 'astros') {
     astros(msg.channel.id);
+  } else if (command == 'test') {
+    iss();
   }
 });
 
