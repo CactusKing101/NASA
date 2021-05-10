@@ -1,7 +1,7 @@
 const request = require('request');
 const Discord = require('discord.js');
 const { chId, prefix, messages } = require('./general/config.json');
-const { main, apiKey1, apiKey2 } = require('./general/token.json');
+const { main, apiKey1, apiKey2, apiKey3 } = require('./general/token.json');
 
 const client = new Discord.Client();
 
@@ -66,7 +66,7 @@ const ISS = () => {
         var date = new Date();
         var embed = new Discord.MessageEmbed()
           .setColor('#0b3d91')
-          .setTitle(`ISS current location as of ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
+          .setTitle(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
           .setImage(`https://image.maps.ls.hereapi.com/mia/1.6/mapview?apiKey=${apiKey2}&c=${lon},${lat}&sb=mk&t=1&z=1&w=500&h=300`);
         message.edit(embed);
       });
@@ -91,7 +91,7 @@ const nextLaunch = () => {
         var launchTime = new Date(body.results[id].net);
         var embed = new Discord.MessageEmbed()
           .setColor('#0b3d91')
-          .setAuthor(`Next space launch as of ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
+          .setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
           .setTitle(body.results[id].name)
           .setThumbnail(body.results[id].image)
           .addField(`Status and probability`, `Status: ${body.results[id].status.name}\nProbability: ${body.results[id].probability}`)
@@ -114,16 +114,16 @@ const events = () => {
   request(`https://ll.thespacedevs.com/2.0.0/event/upcoming/?format=json`, { json: true }, (err, res, body) => {
     if (err) return console.log(err);
     var date = new Date();
-
     for (let i of body.results) {
       var launchTime = new Date(i.date);
       var embed = new Discord.MessageEmbed()
         .setColor('#0b3d91')
-        .setAuthor(`Next events as of ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
+        .setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
         .setTitle(i.name)
         .setURL(i.news_url)
         .setDescription(i.description)
         .addField('Type', i.type.name)
+        .setImage(i.feature_image)
         .setFooter(`T - ${time(launchTime.getTime() - date.getTime())}`);
       embeds.push(embed);
     }
@@ -140,6 +140,42 @@ const events = () => {
   });
 };
 
+const weather = () => {
+  request(`https://api.openweathermap.org/data/2.5/onecall?lat=40.81012855585222&lon=-73.37373804360662&units=imperial&exclude=minutely,hourly&appid=${apiKey3}`, { json: true }, (err, res, body) => {
+    if (err) return console.log(err);
+    client.channels.cache.get('841383890971131914').messages.fetch('841392746974543902')
+      .then(message => {
+        var date = new Date();
+        var embed = new Discord.MessageEmbed()
+          .setColor('#0b3d91')
+          .setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
+          .setTitle(`Forecast for the owner's local area`)
+        for(let i = 0; i < 3; ++i) {
+          let description = `Temperature:\n   High: ${body.daily[i].temp.max}℉\n   Low: ${body.daily[i].temp.min}℉\nHumidity: ${body.daily[i].humidity}%\nCloud Coverage: ${body.daily[i].clouds}%\nWind Speed: ${body.daily[i].wind_speed} mph\n\n**Weather Conditions**:`;
+          for(let j of body.daily[i].weather) {
+            description += `\n${j.main}: ${j.description}`;
+          }
+          embed.addField(`${i + 1} day(s) in the future`, description);
+        }
+        message.edit(embed);
+      });
+    client.channels.cache.get('841383890971131914').messages.fetch('841392760380063796')
+      .then(message => {
+        var date = new Date();
+        var embed = new Discord.MessageEmbed()
+          .setColor('#0b3d91')
+          .setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
+          .setTitle(`Current weather for the owner's local area`)
+          .setDescription(`Temperature: ${body.current.temp}℉\nFeels Like: ${body.current.feels_like}℉\nHumidity: ${body.current.humidity}%\nCloud Coverage: ${body.current.clouds}%\nVisibility: ${Math.floor(body.current.visibility / 10) / 100} mi\nWind Speed: ${body.current.wind_speed} mph`)
+        for(let i of body.current.weather) {
+          embed
+            .addField(i.main, i.description, true);
+        }
+        message.edit(embed);
+      });
+  });
+};
+
 client.once('ready', () => {
   console.log(`Logged in as ${client.user.tag}`);
   setInterval(() => {
@@ -149,6 +185,7 @@ client.once('ready', () => {
   setInterval(ISS, 60000);
   setInterval(events, 900000);
   setInterval(nextLaunch, 900000);
+  setInterval(weather, 600000)
   console.log(`Bot init complete`);
 });
 
@@ -166,7 +203,7 @@ client.on('message', (msg) => {
   } else if (command == 'astros') {
     astros(msg.channel.id);
   } else if (command == 'test') {
-    events();
+    weather();
   }
 });
 
