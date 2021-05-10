@@ -129,7 +129,7 @@ const events = () => {
           if (embeds[j] != null) {
             message.edit(embeds[j]);
           } else {
-            message.edit(new Discord.MessageEmbed().setImage('\u200B').setColor('#9e9d9d'));
+            message.edit(new Discord.MessageEmbed().setDescription('\u200B').setColor('#9e9d9d'));
           }
         });
     }
