@@ -76,7 +76,7 @@ const ISS = () => {
 const nextLaunch = () => {
   client.channels.cache.get('841137170525716480').messages.fetch('841137416278376448')
     .then(message => {
-      request(`https://ll.thespacedevs.com/2.0.0/launch/upcoming/?format=json`, { json: true }, (err, res, body) => {
+      request(`https://ll.thespacedevs.com/2.0.0/launch/upcoming/?format=json&limit=20`, { json: true }, (err, res, body) => {
         if (err) return console.log(err);
         var date = new Date();
         var id = 0;
