@@ -80,10 +80,10 @@ const nextLaunch = () => {
         if (err) return console.log(err);
         var date = new Date();
         var id = 0;
-        var temp = 0;
+        var temp = -1;
         for (let i = 0; i < body.results.length; ++i) {
           var tempDate = new Date(body.results[i].net);
-          if (temp == 0 || temp > (tempDate.getTime() - date.getTime()) && (tempDate.getTime() - date.getTime()) > 0) {
+          if (temp == -1 && (tempDate.getTime() - date.getTime()) > 0 || temp > (tempDate.getTime() - date.getTime()) && (tempDate.getTime() - date.getTime()) > 0) {
             id = i;
             temp = tempDate.getTime() - date.getTime();
           }
