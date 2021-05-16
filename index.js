@@ -111,7 +111,7 @@ const nextLaunch = () => {
 
 const events = () => {
   var embeds = [];
-  request(`https://ll.thespacedevs.com/2.0.0/event/upcoming/?format=json`, { json: true }, (err, res, body) => {
+  request(`https://ll.thespacedevs.com/2.0.0/event/upcoming/?format=json&limit=20`, { json: true }, (err, res, body) => {
     if (err) return console.log(err);
     var date = new Date();
     for (let i of body.results) {
