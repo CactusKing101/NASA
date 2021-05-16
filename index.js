@@ -204,7 +204,7 @@ client.on('message', (msg) => {
   } else if (command == 'astros') {
     astros(msg.channel.id);
   } else if (command == 'test' && msg.author.id == '473110112844644372') {
-    events();
+    nextLaunch();
   }
 });
 
