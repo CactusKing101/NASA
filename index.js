@@ -1,11 +1,12 @@
 const request = require('request');
 const Discord = require('discord.js');
+const db = require('quick.db');
 const { chId, prefix, messages } = require('./general/config.json');
 const { main, apiKey1, apiKey2, apiKey3 } = require('./general/token.json');
 
 const client = new Discord.Client();
 
-const time = (input = Number) => {
+const time = (input) => {
   input = Math.floor((input / 1000) / 60);
   let result = '';
   if (input >= 525600) {
@@ -42,7 +43,7 @@ const APOD = (id = chId) => {
   });
 };
 
-const astros = (id = String) => {
+const astros = (id = '') => {
   request(`http://api.open-notify.org/astros.json`, { json: true }, (err, res, body) => {
     if (err) return console.log(err);
     const ch = client.channels.cache.get(id);
@@ -128,7 +129,7 @@ const events = () => {
         .setFooter(`T - ${time(launchTime.getTime() - date.getTime())}`);
       embeds.push(embed);
     }
-    for(let j = 0; j < messages.length; ++j) {
+    for (let j = 0; j < messages.length; ++j) {
       client.channels.cache.get('841334897825415199').messages.fetch(messages[j])
         .then(message => {
           if (embeds[j] != null) {
@@ -150,11 +151,11 @@ const weather = () => {
         var embed = new Discord.MessageEmbed()
           .setColor('#0b3d91')
           .setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
-          .setTitle(`Forecast for the owner's local area`)
-        for(let i = 1; i < 4; ++i) {
+          .setTitle(`Forecast for the owner's local area`);
+        for (let i = 1; i < 4; ++i) {
           var forecast = new Date(body.daily[i].dt * 1000);
           let description = `Time: ${forecast}\nTemperature:\n   High: ${body.daily[i].temp.max}℉\n   Low: ${body.daily[i].temp.min}℉\nHumidity: ${body.daily[i].humidity}%\nCloud Coverage: ${body.daily[i].clouds}%\nWind Speed: ${body.daily[i].wind_speed} mph\n\n**Weather Conditions**:`;
-          for(let j of body.daily[i].weather) {
+          for (let j of body.daily[i].weather) {
             description += `\n${j.main}: ${j.description}`;
           }
           description += `\n\n\u200B`;
@@ -170,13 +171,82 @@ const weather = () => {
           .setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
           .setTitle(`Current weather for the owner's local area`)
           .setDescription(`Temperature: ${body.current.temp}℉\nFeels Like: ${body.current.feels_like}℉\nHumidity: ${body.current.humidity}%\nCloud Coverage: ${body.current.clouds}%\nVisibility: ${Math.floor(body.current.visibility / 10) / 100} mi\nWind Speed: ${body.current.wind_speed} mph`)
-        for(let i of body.current.weather) {
-          embed
-            .addField(i.main, i.description, true);
+        for (let i of body.current.weather) {
+          embed.addField(i.main, i.description, true);
         }
         message.edit(embed);
       });
   });
+};
+
+const parseDate = (input = 0) => {
+  const date = new Date(input);
+  if (date.getHours() > 12) {
+    if (date.getMinutes() < 10) {
+      return `${date.getHours() - 12}:0${date.getMinutes()} pm`;
+    } else {
+      return `${date.getHours() - 12}:${date.getMinutes()} pm`;
+    }
+  } else {
+    if (date.getMinutes() < 10) {
+      return `${date.getHours()}:0${date.getMinutes()} am`;
+    } else {
+      return `${date.getHours()}:${date.getMinutes()} am`;
+    }
+  }
+};
+
+const parseMoon = (input = 0) => {
+  if (input >= 0 && input <= 0.11 || input > 0.88 && input <= 1) {
+    return ':new_moon:';
+  } else if (input > 0.11 && input <= 0.22) {
+    return ':waxing_crescent_moon:';
+  } else if (input > 0.22 && input <= 0.33) {
+    return ':first_quarter_moon:';
+  } else if (input > 0.33 && input <= 0.44) {
+    return ':waxing_gibbous_moon:';
+  } else if (input > 0.44 && input <= 0.55) {
+    return ':full_moon:';
+  } else if (input > 0.55 && input <= 0.66) {
+    return ':waning_gibbous_moon:';
+  } else if (input > 0.66 && input <= 0.77) {
+    return ':waning_crescent_moon:';
+  }
+};
+
+const sendAlerts = () => {
+  request(`https://api.openweathermap.org/data/2.5/onecall?lat=40.81012855585222&lon=-73.37373804360662&units=imperial&exclude=minutely,hourly,current&appid=${apiKey3}`, { json: true }, (err, res, body) => {
+    if (err) return console.log(err);
+    const alerts = db.get(`discord.alerts`) || [];
+    for (let i of alerts) {
+      const user = client.users.cache.get(i);
+      var date = new Date(body.daily[0].dt * 1000);
+      var embed = new Discord.MessageEmbed()
+        .setColor('#0b3d91')
+        .setTitle(`Today's Weather`)
+        .setDescription(`Temperature:\n- Min: ${body.daily[0].temp.min}℉\n- Max: ${body.daily[0].temp.max}℉\nUv Index: ${body.daily[0].uvi}\nHumidity: ${body.daily[0].humidity}%\nWind Speed: ${body.daily[0].wind_speed} mph\nWind Gust: ${body.daily[0].wind_gust} mph\nCloud Coverage: ${body.daily[0].clouds}%\nSunrise: ${parseDate(body.daily[0].sunrise * 1000)}\nSunset: ${parseDate(body.daily[0].sunset * 1000)}\nMoon:\n- Phase: ${parseMoon(body.daily[0].moon_phase)}\n- Moonrise: ${parseDate(body.daily[0].moonrise * 1000)}\n- Moonset: ${parseDate(body.daily[0].moonset * 1000)}`)
+        .setFooter(date);
+      for(let i of body.daily[0].weather) {
+        embed.addField(i.main, i.description, true);
+      }
+      user.send(embed)
+    }
+  });
+};
+
+const alertList = (add = true, id = '') => {
+  const alerts = db.get(`discord.alerts`) || [];
+  if (add) {
+    if (!alerts.includes(id)) db.push(`discord.alerts`, id);
+  } else {
+    for (let i = 0; i < alerts.length; ++i) {
+      if (alerts[i] == id) {
+        alerts.splice(i, 1);
+        db.set(`discord.alerts`, alerts);
+        break;
+      }
+    }
+  }
 };
 
 client.once('ready', () => {
@@ -189,13 +259,17 @@ client.once('ready', () => {
   setInterval(events, 900000);
   setInterval(nextLaunch, 900000);
   setInterval(weather, 600000)
+  setInterval(() => {
+    var date = new Date();
+    if (date.getHours() == 6 && date.getMinutes() == 0) sendAlerts();
+  }, 1000)
   console.log(`Bot init complete`);
 });
 
 client.on('message', (msg) => {
   if (msg.author.bot || msg.webhookID) return;
 
-  if (msg.author.id == '473110112844644372' && msg.content == '!test' && msg.channel.type == 'dm') { APOD(); }
+  if (msg.author.id == '473110112844644372' && msg.content == '!test' && msg.channel.type == 'dm') { sendAlerts(); };
 
   if (!msg.content.toLowerCase().startsWith(prefix)) return;
   const args = msg.content.slice(prefix.length).trim().split(' ');
@@ -205,8 +279,17 @@ client.on('message', (msg) => {
     APOD(msg.channel.id);
   } else if (command == 'astros') {
     astros(msg.channel.id);
-  } else if (command == 'test' && msg.author.id == '473110112844644372') {
-    weather();
+  } else if (command == 'alerts') {
+    const data = db.get(`discord.${msg.author.id}`);
+    if (data != null && data.alerts != null && data.alerts == true) {
+      db.set(`discord.${msg.author.id}.alerts`, false);
+      alertList(false, msg.author.id);
+      msg.channel.send(`Removed you from the alerts list`);
+    } else {
+      db.set(`discord.${msg.author.id}.alerts`, true);
+      alertList(true, msg.author.id);
+      msg.channel.send(`Added you to the alerts list`);
+    }
   }
 });
 
