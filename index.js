@@ -151,13 +151,14 @@ const weather = () => {
           .setColor('#0b3d91')
           .setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
           .setTitle(`Forecast for the owner's local area`)
-        for(let i = 0; i < 3; ++i) {
-          let description = `Temperature:\n   High: ${body.daily[i].temp.max}℉\n   Low: ${body.daily[i].temp.min}℉\nHumidity: ${body.daily[i].humidity}%\nCloud Coverage: ${body.daily[i].clouds}%\nWind Speed: ${body.daily[i].wind_speed} mph\n\n**Weather Conditions**:`;
+        for(let i = 1; i < 4; ++i) {
+          var forecast = new Date(body.daily[i].dt * 1000);
+          let description = `Time: ${forecast}\nTemperature:\n   High: ${body.daily[i].temp.max}℉\n   Low: ${body.daily[i].temp.min}℉\nHumidity: ${body.daily[i].humidity}%\nCloud Coverage: ${body.daily[i].clouds}%\nWind Speed: ${body.daily[i].wind_speed} mph\n\n**Weather Conditions**:`;
           for(let j of body.daily[i].weather) {
             description += `\n${j.main}: ${j.description}`;
           }
           description += `\n\n\u200B`;
-          embed.addField(`${i + 1} day(s) in the future`, description);
+          embed.addField(`${i} day(s) in the future`, description);
         }
         message.edit(embed);
       });
@@ -205,7 +206,7 @@ client.on('message', (msg) => {
   } else if (command == 'astros') {
     astros(msg.channel.id);
   } else if (command == 'test' && msg.author.id == '473110112844644372') {
-    nextLaunch();
+    weather();
   }
 });
 
