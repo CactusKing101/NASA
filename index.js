@@ -156,6 +156,7 @@ const weather = () => {
           for(let j of body.daily[i].weather) {
             description += `\n${j.main}: ${j.description}`;
           }
+          description += `\n\n\u200B`;
           embed.addField(`${i + 1} day(s) in the future`, description);
         }
         message.edit(embed);
