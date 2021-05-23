@@ -249,7 +249,7 @@ const sendAlerts = () => {
         .setDescription(`:thermometer: Temperature:\n- Min: ${body.daily[0].temp.min}℉\n- Max: ${body.daily[0].temp.max}℉\n- Morning: ${body.daily[0].temp.morn}℉\n- Noon: ${body.daily[0].temp.day}℉\n- Evening: ${body.daily[0].temp.eve}℉\n- Night: ${body.daily[0].temp.night}℉\n:sunny: Uv Index: ${body.daily[0].uvi}\n:sweat_drops: Humidity: ${body.daily[0].humidity}%\n:cloud_tornado: Wind Speed: ${body.daily[0].wind_speed} mph\n:dash: Wind Gust: ${body.daily[0].wind_gust} mph\n:white_sun_cloud: Cloud Coverage: ${body.daily[0].clouds}%\n:sunrise: Sunrise: ${parseDate(body.daily[0].sunrise * 1000)}\n:sunrise_over_mountains: Sunset: ${parseDate(body.daily[0].sunset * 1000)}\n:full_moon_with_face: Moon:\n- Phase: ${parseMoon(body.daily[0].moon_phase)}\n- Moonrise: ${parseDate(body.daily[0].moonrise * 1000)}\n- Moonset: ${parseDate(body.daily[0].moonset * 1000)}`)
         .setFooter(date);
       for(let i of body.daily[0].weather) {
-        embed.addField(i.main, `${i.icon} ${i.id} ${parseIcon(i.icon)} ${i.description}`, true);
+        embed.addField(i.main, `${parseIcon(i.icon)} ${i.description}`, true);
       }
       user.send(embed)
     }
