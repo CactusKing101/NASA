@@ -224,7 +224,7 @@ const sendAlerts = () => {
       var embed = new Discord.MessageEmbed()
         .setColor('#0b3d91')
         .setTitle(`Today's Weather`)
-        .setDescription(`Temperature:\n- Min: ${body.daily[0].temp.min}℉\n- Max: ${body.daily[0].temp.max}℉\nUv Index: ${body.daily[0].uvi}\nHumidity: ${body.daily[0].humidity}%\nWind Speed: ${body.daily[0].wind_speed} mph\nWind Gust: ${body.daily[0].wind_gust} mph\nCloud Coverage: ${body.daily[0].clouds}%\nSunrise: ${parseDate(body.daily[0].sunrise * 1000)}\nSunset: ${parseDate(body.daily[0].sunset * 1000)}\nMoon:\n- Phase: ${parseMoon(body.daily[0].moon_phase)}\n- Moonrise: ${parseDate(body.daily[0].moonrise * 1000)}\n- Moonset: ${parseDate(body.daily[0].moonset * 1000)}`)
+        .setDescription(`Temperature:\n- Min: ${body.daily[0].temp.min}℉\n- Max: ${body.daily[0].temp.max}℉\n- Morning: ${body.daily[0].temp.morn}\n- Noon: ${body.daily[0].temp.day}\n- Evening: ${body.daily[0].temp.eve}\n- Night: ${body.daily[0].temp.night}\nUv Index: ${body.daily[0].uvi}\nHumidity: ${body.daily[0].humidity}%\nWind Speed: ${body.daily[0].wind_speed} mph\nWind Gust: ${body.daily[0].wind_gust} mph\nCloud Coverage: ${body.daily[0].clouds}%\nSunrise: ${parseDate(body.daily[0].sunrise * 1000)}\nSunset: ${parseDate(body.daily[0].sunset * 1000)}\nMoon:\n- Phase: ${parseMoon(body.daily[0].moon_phase)}\n- Moonrise: ${parseDate(body.daily[0].moonrise * 1000)}\n- Moonset: ${parseDate(body.daily[0].moonset * 1000)}`)
         .setFooter(date);
       for(let i of body.daily[0].weather) {
         embed.addField(i.main, i.description, true);
