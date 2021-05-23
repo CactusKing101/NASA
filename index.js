@@ -261,7 +261,7 @@ client.once('ready', () => {
   setInterval(weather, 600000)
   setInterval(() => {
     var date = new Date();
-    if (date.getHours() == 6 && date.getMinutes() == 0) sendAlerts();
+    if (date.getHours() == 6 && date.getMinutes() == 15) sendAlerts();
   }, 1000)
   console.log(`Bot init complete`);
 });
