@@ -214,6 +214,28 @@ const parseMoon = (input = 0) => {
   }
 };
 
+const parseIcon = (input = '') => {
+  if (['01d', '01n'].includes(input)) {
+    return ':sunny:';
+  } else if (['02d', ['02n'].includes(input)]) {
+    return ':white_sun_small_cloud:';
+  } else if (['03d', '03n'].includes(input)) {
+    return ':partly_sunny:';
+  } else if (['04d', '04n'].includes(input)) {
+    return ':white_sun_cloud:';
+  } else if (['09d', '09n'].includes(input)) {
+    return ':white_sun_rain_cloud:';
+  } else if (['10d', '10n'].includes(input)) {
+    return ':cloud_rain:';
+  } else if (['11d', '11n'].includes(input)) {
+    return ':thunder_cloud_rain:';
+  } else if (['13d', '13n'].includes(input)) {
+    return ':cloud_snow:';
+  } else if (['50d', '50n'].includes(input)) {
+    return ':fog:';
+  }
+};
+
 const sendAlerts = () => {
   request(`https://api.openweathermap.org/data/2.5/onecall?lat=40.81012855585222&lon=-73.37373804360662&units=imperial&exclude=minutely,hourly,current&appid=${apiKey3}`, { json: true }, (err, res, body) => {
     if (err) return console.log(err);
@@ -227,7 +249,7 @@ const sendAlerts = () => {
         .setDescription(`:thermometer: Temperature:\n- Min: ${body.daily[0].temp.min}℉\n- Max: ${body.daily[0].temp.max}℉\n- Morning: ${body.daily[0].temp.morn}℉\n- Noon: ${body.daily[0].temp.day}℉\n- Evening: ${body.daily[0].temp.eve}℉\n- Night: ${body.daily[0].temp.night}℉\n:sunny: Uv Index: ${body.daily[0].uvi}\n:sweat_drops: Humidity: ${body.daily[0].humidity}%\n:cloud_tornado: Wind Speed: ${body.daily[0].wind_speed} mph\n:dash: Wind Gust: ${body.daily[0].wind_gust} mph\n:white_sun_cloud: Cloud Coverage: ${body.daily[0].clouds}%\n:sunrise: Sunrise: ${parseDate(body.daily[0].sunrise * 1000)}\n:sunrise_over_mountains: Sunset: ${parseDate(body.daily[0].sunset * 1000)}\n:full_moon_with_face: Moon:\n- Phase: ${parseMoon(body.daily[0].moon_phase)}\n- Moonrise: ${parseDate(body.daily[0].moonrise * 1000)}\n- Moonset: ${parseDate(body.daily[0].moonset * 1000)}`)
         .setFooter(date);
       for(let i of body.daily[0].weather) {
-        embed.addField(i.main, i.description, true);
+        embed.addField(i.main, `${parseIcon(i.icon)} ${i.description}`, true);
       }
       user.send(embed)
     }
