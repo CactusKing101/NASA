@@ -217,7 +217,7 @@ const parseMoon = (input = 0) => {
 const parseIcon = (input = '') => {
   if (['01d', '01n'].includes(input)) {
     return ':sunny:';
-  } else if (['02d', ['02n'].includes(input)]) {
+  } else if (['02d', '02n'].includes(input)) {
     return ':white_sun_small_cloud:';
   } else if (['03d', '03n'].includes(input)) {
     return ':partly_sunny:';
