@@ -181,11 +181,23 @@ const weather = () => {
 
 const parseDate = (input = 0) => {
   const date = new Date(input);
-  if (date.getHours() > 12) {
+  if (date.getHours() == 12) {
+    if (date.getMinutes() < 10) {
+      return `${date.getHours()}:0${date.getMinutes()} pm`;
+    } else {
+      return `${date.getHours()}:${date.getMinutes()} pm`;
+    }
+  } else if (date.getHours() > 12) {
     if (date.getMinutes() < 10) {
       return `${date.getHours() - 12}:0${date.getMinutes()} pm`;
     } else {
       return `${date.getHours() - 12}:${date.getMinutes()} pm`;
+    }
+  } else if (date.getHours() == 24) {
+    if (date.getMinutes() < 10) {
+      return `${date.getHours() - 12}:0${date.getMinutes()} am`;
+    } else {
+      return `${date.getHours() - 12}:${date.getMinutes()} am`;
     }
   } else {
     if (date.getMinutes() < 10) {
