@@ -284,7 +284,7 @@ client.once('ready', () => {
   setInterval(() => {
     var date = new Date();
     if (date.getHours() == 6 && date.getMinutes() == 15) sendAlerts();
-  }, 1000)
+  }, 60000)
   console.log(`Bot init complete`);
 });
 
