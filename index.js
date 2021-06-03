@@ -62,7 +62,6 @@ const ISS = () => {
   client.channels.cache.get('841103909070307368').messages.fetch('841103939302064199')
     .then(message => {
       request(`http://api.open-notify.org/iss-now.json`, { json: true }, (err, res, body) => {
-        console.log(body);
         if (body == null) return console.log('another iss pos null :(');
         let lon = body.iss_position.longitude;
         let lat = body.iss_position.latitude;
