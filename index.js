@@ -155,9 +155,9 @@ const weather = () => {
           .setTitle(`Forecast for the owner's local area`);
         for (let i = 1; i < 4; ++i) {
           var forecast = new Date(body.daily[i].dt * 1000);
-          let description = `Time: ${forecast}\nTemperature:\n   High: ${body.daily[i].temp.max}℉\n   Low: ${body.daily[i].temp.min}℉\nHumidity: ${body.daily[i].humidity}%\nCloud Coverage: ${body.daily[i].clouds}%\nWind Speed: ${body.daily[i].wind_speed} mph\n\n**Weather Conditions**:`;
+          let description = `Time: ${forecast}\n:thermometer: Temperature:\n- :arrow_up: High: ${body.daily[i].temp.max}℉\n- :arrow_down: Low: ${body.daily[i].temp.min}℉\n:sweat_drops: Humidity: ${body.daily[i].humidity}%\n:white_sun_cloud: Cloud Coverage: ${body.daily[i].clouds}%\n:cloud_tornado: Wind Speed: ${body.daily[i].wind_speed} mph\n\n**Weather Conditions**:`;
           for (let j of body.daily[i].weather) {
-            description += `\n${j.main}: ${j.description}`;
+            description += `\n${parseIcon(j.icon)} ${j.main}: ${j.description}`;
           }
           description += `\n\n\u200B`;
           embed.addField(`${i} day(s) in the future`, description);
@@ -171,9 +171,9 @@ const weather = () => {
           .setColor('#0b3d91')
           .setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
           .setTitle(`Current weather for the owner's local area`)
-          .setDescription(`Temperature: ${body.current.temp}℉\nFeels Like: ${body.current.feels_like}℉\nHumidity: ${body.current.humidity}%\nCloud Coverage: ${body.current.clouds}%\nVisibility: ${Math.floor(body.current.visibility / 10) / 100} mi\nWind Speed: ${body.current.wind_speed} mph`)
+          .setDescription(`:thermometer: Temperature: ${body.current.temp}℉\n:hot_face: Feels Like: ${body.current.feels_like}℉\n:sweat_drops: Humidity: ${body.current.humidity}%\n:white_sun_cloud: Cloud Coverage: ${body.current.clouds}%\n:eyes: Visibility: ${Math.floor(body.current.visibility / 10) / 100} mi\n:cloud_tornado: Wind Speed: ${body.current.wind_speed} mph`)
         for (let i of body.current.weather) {
-          embed.addField(i.main, i.description, true);
+          embed.addField(`${parseIcon(i.icon)} ${i.main}`, i.description, true);
         }
         message.edit(embed);
       });
@@ -223,6 +223,8 @@ const parseMoon = (input = 0) => {
   } else if (input > 0.55 && input <= 0.66) {
     return ':waning_gibbous_moon:';
   } else if (input > 0.66 && input <= 0.77) {
+    return ':last_quarter_moon:';
+  } else if (input > 0.77 && input <= 0.88) {
     return ':waning_crescent_moon:';
   }
 };
@@ -304,7 +306,7 @@ client.once('ready', () => {
 client.on('message', (msg) => {
   if (msg.author.bot || msg.webhookID) return;
 
-  if (msg.author.id == '473110112844644372' && msg.content == '!test' && msg.channel.type == 'dm') { sendAlerts(); };
+  if (msg.author.id == '473110112844644372' && msg.content == '!test' && msg.channel.type == 'dm') { weather(); };
 
   if (!msg.content.toLowerCase().startsWith(prefix)) return;
   const args = msg.content.slice(prefix.length).trim().split(' ');
