@@ -104,7 +104,9 @@ const nextLaunch = () => {
           embed
             .setDescription(body.results[id].mission.description)
             .addField(`Mission ${body.results[id].mission.name}`, `Type: ${body.results[id].mission.type}`)
-            .addField(`Orbit`, body.results[id].mission.orbit.name);
+          if (body.results[id].mission.orbit != null) {
+            embed.addField(`Orbit`, body.results[id].mission.orbit.name);
+          };
         }
         message.edit(embed);
       });
