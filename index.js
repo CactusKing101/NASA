@@ -188,7 +188,7 @@ const weather = () => {
           .setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
           .setTitle(`ALERTS`)
         for (let i of body.alerts) {
-          alert.addField(i.event, `${i.sender_name}\n${i.description}`);
+          embed.addField(i.event, `${i.sender_name}\n${i.description}`);
         }
         message.edit(embed);
       } else {
