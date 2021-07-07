@@ -182,14 +182,18 @@ const weather = () => {
     client.channels.cache.get('841383890971131914').messages.fetch('862149888510525500')
     .then(message => {
       var date = new Date();
-      var embed = new Discord.MessageEmbed()
-        .setColor('#ce012b')
-        .setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
-        .setTitle(`ALERTS`)
-      for (let i of body.alerts) {
-        alert.addField(i.event, `${i.sender_name}\n${i.description}`);
+        if (body.alerts != null) {
+          var embed = new Discord.MessageEmbed()
+          .setColor('#ce012b')
+          .setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
+          .setTitle(`ALERTS`)
+        for (let i of body.alerts) {
+          alert.addField(i.event, `${i.sender_name}\n${i.description}`);
+        }
+        message.edit(embed);
+      } else {
+        message.edit('\u200B');
       }
-      message.edit(embed);
     })
   });
 };
