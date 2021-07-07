@@ -179,6 +179,18 @@ const weather = () => {
         }
         message.edit(embed);
       });
+    client.channels.cache.get('841383890971131914').messages.fetch('862149888510525500')
+    .then(message => {
+      var date = new Date();
+      var embed = new Discord.MessageEmbed()
+        .setColor('#ce012b')
+        .setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
+        .setTitle(`ALERTS`)
+      for (let i of body.alerts) {
+        alert.addField(i.event, `${i.sender_name}\n${i.description}`);
+      }
+      message.edit(embed);
+    })
   });
 };
 
@@ -265,10 +277,19 @@ const sendAlerts = () => {
         .setTitle(`Today's Weather`)
         .setDescription(`:thermometer: Temperature:\n- :arrow_up: Max: ${body.daily[0].temp.max}℉\n- :arrow_down: Min: ${body.daily[0].temp.min}℉\n- :city_sunset: Morning: ${body.daily[0].temp.morn}℉\n- :cityscape: Noon: ${body.daily[0].temp.day}℉\n- :city_dusk: Evening: ${body.daily[0].temp.eve}℉\n- :night_with_stars: Night: ${body.daily[0].temp.night}℉\n\n:sunny: Uv Index: ${body.daily[0].uvi}\n:sweat_drops: Humidity: ${body.daily[0].humidity}%\n:cloud_tornado: Wind Speed: ${body.daily[0].wind_speed} mph\n:dash: Wind Gust: ${body.daily[0].wind_gust} mph\n:white_sun_cloud: Cloud Coverage: ${body.daily[0].clouds}%\n:sunrise: Sunrise: ${parseDate(body.daily[0].sunrise * 1000)}\n:sunrise_over_mountains: Sunset: ${parseDate(body.daily[0].sunset * 1000)}\n\n:full_moon_with_face: Moon:\n- Phase: ${parseMoon(body.daily[0].moon_phase)}\n- Moonrise: ${parseDate(body.daily[0].moonrise * 1000)}\n- Moonset: ${parseDate(body.daily[0].moonset * 1000)}`)
         .setFooter(date);
-      for(let i of body.daily[0].weather) {
-        embed.addField(i.main, `${parseIcon(i.icon)} ${i.description}`, true);
+      for(let j of body.daily[0].weather) {
+        embed.addField(j.main, `${parseIcon(j.icon)} ${j.description}`, true);
       }
-      user.send(embed)
+      user.send(embed);
+      if (body.alerts != null) {
+        var alert = new Discord.MessageEmbed()
+          .setColor('#ce012b')
+          .setTitle('ALERTS');
+        for(let j = 0; j < body.alerts.length; ++j) {
+          alert.addField(body.alerts[j].event, `${body.alerts[j].sender_name}\n${body.alerts[j].description}`);
+        }
+        user.send(alert);
+      }
     }
   });
 };
@@ -308,7 +329,7 @@ client.once('ready', () => {
 client.on('message', (msg) => {
   if (msg.author.bot || msg.webhookID) return;
 
-  if (msg.author.id == '473110112844644372' && msg.content == '!test' && msg.channel.type == 'dm') { nextLaunch(); };
+  if (msg.author.id == '473110112844644372' && msg.content == '!test' && msg.channel.type == 'dm') { sendAlerts(); };
 
   if (!msg.content.toLowerCase().startsWith(prefix)) return;
   const args = msg.content.slice(prefix.length).trim().split(' ');
