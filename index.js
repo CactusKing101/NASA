@@ -188,7 +188,9 @@ const weather = () => {
           .setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
           .setTitle(`ALERTS`)
         for (let i of body.alerts) {
-          embed.addField(i.event, `${i.sender_name}\n${i.description}`);
+          let description = `${i.sender_name}\n${i.description}`;
+          if (description.length > 1024) description = `${description.substring(0, 1013)}\ntoo long...`;
+          embed.addField(i.event, description);
         }
         message.edit(embed);
       } else {
