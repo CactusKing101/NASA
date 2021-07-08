@@ -189,8 +189,14 @@ const weather = () => {
           .setTitle(`ALERTS`)
         for (let i of body.alerts) {
           let description = `${i.sender_name}\n${i.description}`;
-          if (description.length > 1024) description = `${description.substring(0, 1012)}\ntoo long...`;
-          embed.addField(i.event, description);
+          if (description.length > 1024) {
+            embed.addField(i.event, description.substring(0, 1024))
+            for(let j = 1; j < Math.floor(description.length / 1024) + 1; ++j) {
+              embed.addField(`Continuation`, description.substring(j * 1024, (j + 1) * 1024));
+            }
+          } else {
+            embed.addField(i.event, description);
+          }
         }
         message.edit(embed);
       } else {
