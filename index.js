@@ -184,9 +184,9 @@ const weather = () => {
       var date = new Date();
         if (body.alerts != null) {
           var embed = new Discord.MessageEmbed()
-          .setColor('#ce012b')
-          .setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
-          .setTitle(`ALERTS`)
+            .setColor('#ce012b')
+            .setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
+            .setTitle(`ALERTS`)
         for (let i of body.alerts) {
           let description = `${i.sender_name}\n${i.description}`;
           if (description.length > 1024) {
@@ -200,7 +200,11 @@ const weather = () => {
         }
         message.edit(embed);
       } else {
-        message.edit('\u200B');
+        var embed = new Discord.MessageEmbed()
+          .setColor('#0b3d91')
+          .setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
+          .setFooter('No current weather statements');
+        message.edit(embed);
       }
     })
   });
