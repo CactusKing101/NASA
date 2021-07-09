@@ -179,34 +179,88 @@ const weather = () => {
         }
         message.edit(embed);
       });
-    client.channels.cache.get('841383890971131914').messages.fetch('862149888510525500')
-    .then(message => {
-      var date = new Date();
+    client.channels.cache.get('841383890971131914').messages.fetch('862885892652662804')
+      .then(message => {
+        let embed2 = '\u200B';
+        var date = new Date();
         if (body.alerts != null) {
           var embed = new Discord.MessageEmbed()
             .setColor('#ce012b')
             .setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
-            .setTitle(`ALERTS`)
-        for (let i of body.alerts) {
-          let description = `${i.sender_name}\n${i.description}`;
-          if (description.length > 1024) {
-            embed.addField(i.event, description.substring(0, 1024))
-            for(let j = 1; j < Math.floor(description.length / 1024) + 1; ++j) {
-              embed.addField(`Continuation`, description.substring(j * 1024, (j + 1) * 1024));
+            .setTitle(`ALERTS`);
+          let all = '';
+          for (let i of body.alerts) {
+            all += `${i.sender_name}\n${i.description}`;
+          }
+          if (all.length < 5500) {
+            for (let i of body.alerts) {
+              let description = `${i.sender_name}\n${i.description}`;
+              if (description.length > 1024) {
+                embed.addField(i.event, description.substring(0, 1024))
+                for (let j = 1; j < Math.floor(description.length / 1024) + 1; ++j) {
+                  embed.addField(`Continuation`, description.substring(j * 1024, (j + 1) * 1024));
+                }
+              } else {
+                embed.addField(i.event, description);
+              }
+              message.edit(embed);
             }
           } else {
-            embed.addField(i.event, description);
+            let reset = 0;
+            for (let i of body.alerts) {
+              if (reset < 5500) {
+                let description = `${i.sender_name}\n${i.description}`;
+                if (description.length + reset < 5500) {
+                  if (description.length > 1024) {
+                    embed.addField(i.event, description.substring(0, 1024));
+                    for (let j = 1; j < Math.floor(description.length / 1024) + 1; ++j) {
+                      embed.addField(`Continuation`, description.substring(j * 1024, (j + 1) * 1024));
+                    }
+                  } else {
+                    embed.addField(i.event, description);
+                  }
+                } else {
+                  if (embed2 == '\u200B') embed2 = new Discord.MessageEmbed().setColor('#ce012b').setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`).setTitle(`ALERTS`);
+                  if (description.length > 1024) {
+                    embed2.addField(i.event, description.substring(0, 1024));
+                    for (let j = 1; j < Math.floor(description.length / 1024) + 1; ++j) {
+                      embed2.addField(`Continuation`, description.substring(j * 1024, (j + 1) * 1024));
+                    }
+                  } else {
+                    embed2.addField(i.event, description);
+                  } 
+                }
+                reset += description.length;
+              } else if (reset < 11000) {
+                if (embed2 == '\u200B') embed2 = new Discord.MessageEmbed().setColor('#ce012b').setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`).setTitle(`ALERTS`);
+                let description = `${i.sender_name}\n${i.description}`;
+                if (description.length < 5500) {
+                  if (description.length > 1024) {
+                    embed2.addField(i.event, description.substring(0, 1024));
+                    for (let j = 1; j < Math.floor(description.length / 1024) + 1; ++j) {
+                      embed2.addField(`Continuation`, description.substring(j * 1024, (j + 1) * 1024));
+                    }
+                  } else {
+                    embed2.addField(i.event, description);
+                  }
+                }
+                reset += description.length;
+              } else {
+                client.users.cache.get('473110112844644372').send('too much alerts go to weather function and fix because your lazy ass didn\'t do a for loop');
+              }
+            }
+            message.edit(embed);
+            client.channels.cache.get('841383890971131914').messages.fetch('862885923338977320').then((message2) => message2.edit(embed2));
           }
+        } else {
+          var embed = new Discord.MessageEmbed()
+            .setColor('#0b3d91')
+            .setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
+            .setFooter('No current weather statements');
+          message.edit(embed);
+          client.channels.cache.get('841383890971131914').messages.fetch('862885923338977320').then((message2) => message2.edit(embed2));
         }
-        message.edit(embed);
-      } else {
-        var embed = new Discord.MessageEmbed()
-          .setColor('#0b3d91')
-          .setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
-          .setFooter('No current weather statements');
-        message.edit(embed);
-      }
-    })
+      })
   });
 };
 
@@ -293,7 +347,7 @@ const sendAlerts = () => {
         .setTitle(`Today's Weather`)
         .setDescription(`:thermometer: Temperature:\n- :arrow_up: Max: ${body.daily[0].temp.max}℉\n- :arrow_down: Min: ${body.daily[0].temp.min}℉\n- :city_sunset: Morning: ${body.daily[0].temp.morn}℉\n- :cityscape: Noon: ${body.daily[0].temp.day}℉\n- :city_dusk: Evening: ${body.daily[0].temp.eve}℉\n- :night_with_stars: Night: ${body.daily[0].temp.night}℉\n\n:sunny: Uv Index: ${body.daily[0].uvi}\n:sweat_drops: Humidity: ${body.daily[0].humidity}%\n:cloud_tornado: Wind Speed: ${body.daily[0].wind_speed} mph\n:dash: Wind Gust: ${body.daily[0].wind_gust} mph\n:white_sun_cloud: Cloud Coverage: ${body.daily[0].clouds}%\n:sunrise: Sunrise: ${parseDate(body.daily[0].sunrise * 1000)}\n:sunrise_over_mountains: Sunset: ${parseDate(body.daily[0].sunset * 1000)}\n\n:full_moon_with_face: Moon:\n- Phase: ${parseMoon(body.daily[0].moon_phase)}\n- Moonrise: ${parseDate(body.daily[0].moonrise * 1000)}\n- Moonset: ${parseDate(body.daily[0].moonset * 1000)}`)
         .setFooter(date);
-      for(let j of body.daily[0].weather) {
+      for (let j of body.daily[0].weather) {
         embed.addField(j.main, `${parseIcon(j.icon)} ${j.description}`, true);
       }
       user.send(embed);
@@ -301,7 +355,7 @@ const sendAlerts = () => {
         var alert = new Discord.MessageEmbed()
           .setColor('#ce012b')
           .setTitle('ALERTS');
-        for(let j = 0; j < body.alerts.length; ++j) {
+        for (let j = 0; j < body.alerts.length; ++j) {
           alert.addField(body.alerts[j].event, `${body.alerts[j].sender_name}\n${body.alerts[j].description}`);
         }
         user.send(alert);
