@@ -195,7 +195,17 @@ const weather = () => {
           if (all.length < 5500) {
             for (let i of body.alerts) {
               let description = `${i.sender_name}\n${i.description}`;
-              if (description.length > 1024) {
+              if (description.length > 5500) {
+                embed.addField(i.event, description.substring(0, 1024))
+                for (let j = 1; j < Math.floor(description.length / 1024) + 1; ++j) {
+                  if (j >= 5) {
+                    if (embed2 == '\u200B') embed2 = new Discord.MessageEmbed().setColor('#ce012b').setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`).setTitle(`ALERTS`);
+                    embed2.addField(`Continuation`, description.substring(j * 1024, (j + 1) * 1024));
+                  } else {
+                    embed.addField(`Continuation`, description.substring(j * 1024, (j + 1) * 1024));
+                  }
+                }
+              } else if (description.length > 1024) {
                 embed.addField(i.event, description.substring(0, 1024))
                 for (let j = 1; j < Math.floor(description.length / 1024) + 1; ++j) {
                   embed.addField(`Continuation`, description.substring(j * 1024, (j + 1) * 1024));
@@ -204,6 +214,7 @@ const weather = () => {
                 embed.addField(i.event, description);
               }
               message.edit(embed);
+              client.channels.cache.get('841383890971131914').messages.fetch('862885923338977320').then((message2) => message2.edit(embed2));
             }
           } else {
             let reset = 0;
@@ -214,8 +225,12 @@ const weather = () => {
                   if (description.length > 1024) {
                     embed.addField(i.event, description.substring(0, 1024));
                     for (let j = 1; j < Math.floor(description.length / 1024) + 1; ++j) {
-                      embed.addField(`Continuation`, description.substring(j * 1024, (j + 1) * 1024));
-                    }
+                      if (j >= 5) {
+                        if (embed2 == '\u200B') embed2 = new Discord.MessageEmbed().setColor('#ce012b').setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`).setTitle(`ALERTS`);
+                        embed2.addField(`Continuation`, description.substring(j * 1024, (j + 1) * 1024));
+                      } else {
+                        embed.addField(`Continuation`, description.substring(j * 1024, (j + 1) * 1024));
+                      }                    }
                   } else {
                     embed.addField(i.event, description);
                   }
@@ -224,8 +239,11 @@ const weather = () => {
                   if (description.length > 1024) {
                     embed2.addField(i.event, description.substring(0, 1024));
                     for (let j = 1; j < Math.floor(description.length / 1024) + 1; ++j) {
-                      embed2.addField(`Continuation`, description.substring(j * 1024, (j + 1) * 1024));
-                    }
+                      if (j >= 5) {
+                        client.users.cache.get('473110112844644372').send('err id 1\ntoo much alerts go to weather function and fix because your lazy ass didn\'t do a for loop');
+                      } else {
+                        embed.addField(`Continuation`, description.substring(j * 1024, (j + 1) * 1024));
+                      }                    }
                   } else {
                     embed2.addField(i.event, description);
                   } 
@@ -246,7 +264,7 @@ const weather = () => {
                 }
                 reset += description.length;
               } else {
-                client.users.cache.get('473110112844644372').send('too much alerts go to weather function and fix because your lazy ass didn\'t do a for loop');
+                client.users.cache.get('473110112844644372').send('err id 2\ntoo much alerts go to weather function and fix because your lazy ass didn\'t do a for loop');
               }
             }
             message.edit(embed);
