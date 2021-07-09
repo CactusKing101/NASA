@@ -221,32 +221,24 @@ const weather = () => {
             for (let i of body.alerts) {
               if (reset < 5500) {
                 let description = `${i.sender_name}\n${i.description}`;
-                if (description.length + reset < 5500) {
-                  if (description.length > 1024) {
-                    embed.addField(i.event, description.substring(0, 1024));
-                    for (let j = 1; j < Math.floor(description.length / 1024) + 1; ++j) {
-                      if (j >= 5) {
+                if (description.length > 1024) {
+                  embed.addField(i.event, description.substring(0, 1024));
+                  let reset2 = reset;
+                  for (let j = 1; j < Math.floor(description.length / 1024) + 1; ++j) {
+                    if (j >= 5) {
+                      if (embed2 == '\u200B') embed2 = new Discord.MessageEmbed().setColor('#ce012b').setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`).setTitle(`ALERTS`);
+                      embed2.addField(`Continuation`, description.substring(j * 1024, (j + 1) * 1024));
+                    } else {
+                      if (reset2 + description.substring(j * 1024, (j + 1) * 1024).length > 5500) {
                         if (embed2 == '\u200B') embed2 = new Discord.MessageEmbed().setColor('#ce012b').setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`).setTitle(`ALERTS`);
                         embed2.addField(`Continuation`, description.substring(j * 1024, (j + 1) * 1024));
-                      } else {
-                        embed.addField(`Continuation`, description.substring(j * 1024, (j + 1) * 1024));
-                      }                    }
-                  } else {
-                    embed.addField(i.event, description);
+                      }
+                      embed.addField(`Continuation`, description.substring(j * 1024, (j + 1) * 1024));
+                      reset2 += description.substring(j * 1024, (j + 1) * 1024).length;
+                    }
                   }
                 } else {
-                  if (embed2 == '\u200B') embed2 = new Discord.MessageEmbed().setColor('#ce012b').setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`).setTitle(`ALERTS`);
-                  if (description.length > 1024) {
-                    embed2.addField(i.event, description.substring(0, 1024));
-                    for (let j = 1; j < Math.floor(description.length / 1024) + 1; ++j) {
-                      if (j >= 5) {
-                        client.users.cache.get('473110112844644372').send('err id 1\ntoo much alerts go to weather function and fix because your lazy ass didn\'t do a for loop');
-                      } else {
-                        embed.addField(`Continuation`, description.substring(j * 1024, (j + 1) * 1024));
-                      }                    }
-                  } else {
-                    embed2.addField(i.event, description);
-                  } 
+                  embed.addField(i.event, description);
                 }
                 reset += description.length;
               } else if (reset < 11000) {
