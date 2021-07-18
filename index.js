@@ -98,11 +98,9 @@ const nextLaunch = () => {
           .setThumbnail(body.results[id].image)
           .addField(`Status and probability`, `Status: ${body.results[id].status.name}\nProbability: ${body.results[id].probability}`)
           .addField(`Provider: ${body.results[id].launch_service_provider.name}`, `Type: ${body.results[id].launch_service_provider.type}`)
-          .setFooter(`Launch <t:${launchTime.getTime()}:R>`)
           .setImage(body.results[id].ideographic);
         if (body.results[id].mission != null) {
-          embed
-            .setDescription(body.results[id].mission.description)
+          embed.setDescription(`Launch <t:${launchTime.getTime()}:R>\n\n${body.results[id].mission.description}`)
             .addField(`Mission ${body.results[id].mission.name}`, `Type: ${body.results[id].mission.type}`)
           if (body.results[id].mission.orbit != null) {
             embed.addField(`Orbit`, body.results[id].mission.orbit.name);
