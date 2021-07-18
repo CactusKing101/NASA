@@ -406,7 +406,7 @@ client.once('ready', () => {
 client.on('message', (msg) => {
   if (msg.author.bot || msg.webhookID) return;
 
-  if (msg.author.id == '473110112844644372' && msg.content == '!test' && msg.channel.type == 'dm') { nextLaunch(); };
+  if (msg.author.id == '473110112844644372' && msg.content == '!test' && msg.channel.type == 'dm') { events(); };
 
   if (!msg.content.toLowerCase().startsWith(prefix)) return;
   const args = msg.content.slice(prefix.length).trim().split(' ');
