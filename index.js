@@ -100,7 +100,7 @@ const nextLaunch = () => {
           .addField(`Provider: ${body.results[id].launch_service_provider.name}`, `Type: ${body.results[id].launch_service_provider.type}`)
           .setImage(body.results[id].ideographic);
         if (body.results[id].mission != null) {
-          embed.setDescription(`Launch <t:${launchTime.getTime()}:R>\n\n${body.results[id].mission.description}`)
+          embed.setDescription(`Launch <t:${Math.floor(launchTime.getTime() / 1000)}:R>\n\n${body.results[id].mission.description}`)
             .addField(`Mission ${body.results[id].mission.name}`, `Type: ${body.results[id].mission.type}`)
           if (body.results[id].mission.orbit != null) {
             embed.addField(`Orbit`, body.results[id].mission.orbit.name);
