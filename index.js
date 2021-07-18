@@ -124,10 +124,9 @@ const events = () => {
         .setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
         .setTitle(i.name)
         .setURL(i.news_url)
-        .setDescription(i.description)
+        .setDescription(`Launch <t:${Math.floor(launchTime.getTime() / 1000)}:R>\n\n${i.description}`)
         .addField('Type', i.type.name)
-        .setImage(i.feature_image)
-        .setFooter(`T - ${time(launchTime.getTime() - date.getTime())}`);
+        .setImage(i.feature_image);
       embeds.push(embed);
     }
     for (let j = 0; j < messages.length; ++j) {
