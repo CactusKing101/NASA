@@ -98,7 +98,7 @@ const nextLaunch = () => {
           .setThumbnail(body.results[id].image)
           .addField(`Status and probability`, `Status: ${body.results[id].status.name}\nProbability: ${body.results[id].probability}`)
           .addField(`Provider: ${body.results[id].launch_service_provider.name}`, `Type: ${body.results[id].launch_service_provider.type}`)
-          .setFooter(`T - ${time(launchTime.getTime() - date.getTime())}`)
+          .setFooter(`Launch <t:${launchTime.getTime()}:R>`)
           .setImage(body.results[id].ideographic);
         if (body.results[id].mission != null) {
           embed
@@ -409,7 +409,7 @@ client.once('ready', () => {
 client.on('message', (msg) => {
   if (msg.author.bot || msg.webhookID) return;
 
-  if (msg.author.id == '473110112844644372' && msg.content == '!test' && msg.channel.type == 'dm') { weather(); };
+  if (msg.author.id == '473110112844644372' && msg.content == '!test' && msg.channel.type == 'dm') { nextLaunch(); };
 
   if (!msg.content.toLowerCase().startsWith(prefix)) return;
   const args = msg.content.slice(prefix.length).trim().split(' ');
