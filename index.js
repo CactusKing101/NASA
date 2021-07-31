@@ -124,7 +124,7 @@ const events = () => {
         .setAuthor(`Updated on ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} EST`)
         .setTitle(i.name)
         .setURL(i.news_url)
-        .setDescription(`Launch <t:${Math.floor(launchTime.getTime() / 1000)}:R>\n\n${i.description}`)
+        .setDescription(`<t:${Math.floor(launchTime.getTime() / 1000)}:R>\n\n${i.description}`)
         .addField('Type', i.type.name)
         .setImage(i.feature_image);
       embeds.push(embed);
